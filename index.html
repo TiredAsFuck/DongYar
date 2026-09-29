@@ -448,11 +448,11 @@
     try {
       var already = await navigator.storage.persisted();
       if (already) {
-        console.log('✓ حافظه ی پایدار از قبل فعال بود');
+        console.log('حافظه ی پایدار از قبل فعال بود');
         return true;
       }
       var granted = await navigator.storage.persist();
-      console.log('حافظه ی پایدار:', granted ? '✓ فعال شد' : '✗ رد شد');
+      console.log('حافظه ی پایدار:', granted ? 'فعال شد' : 'رد شد');
       return granted;
     } catch (e) {
       console.warn('Persistent storage error:', e);
@@ -820,7 +820,7 @@
     expenses = [];
     saveState();
     renderAll();
-    showToast('✓ تسویه شد — ' + money(count) + ' تراکنش پاک شد');
+    showToast('تسویه شد — ' + money(count) + ' تراکنش پاک شد');
   }
 
   function exportBackup() {
@@ -843,7 +843,7 @@
       a.click();
       document.body.removeChild(a);
       setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-      showToast('💾 پشتیبان دانلود شد');
+      showToast('پشتیبان دانلود شد');
     } catch (e) {
       console.error(e);
       showToast('خطا در ساخت فایل پشتیبان');
@@ -877,7 +877,7 @@
         expenses = data.expenses;
         saveState();
         renderAll();
-        showToast('✓ پشتیبان بازگردانی شد');
+        showToast('پشتیبان بازگردانی شد');
       } catch (err) {
         console.error(err);
         showToast('خطا: ' + err.message);
@@ -929,10 +929,10 @@
 
     html += '<table style="width:100%;border-collapse:collapse;margin-bottom:28px;font-size:12.5px;">';
     html += '<tr>';
-    html += '<td style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;text-align:center;color:#64748b;font-weight:600;">📅 تاریخ</td>';
-    html += '<td style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;text-align:center;color:#64748b;font-weight:600;">👥 افراد</td>';
-    html += '<td style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;text-align:center;color:#64748b;font-weight:600;">🧾 تراکنش</td>';
-    html += '<td style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;text-align:center;color:#64748b;font-weight:600;">💰 جمع کل</td>';
+    html += '<td style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;text-align:center;color:#64748b;font-weight:600;">تاریخ</td>';
+    html += '<td style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;text-align:center;color:#64748b;font-weight:600;">افراد</td>';
+    html += '<td style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;text-align:center;color:#64748b;font-weight:600;">تراکنش</td>';
+    html += '<td style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;text-align:center;color:#64748b;font-weight:600;">جمع کل</td>';
     html += '</tr>';
     html += '<tr>';
     html += '<td style="padding:12px 14px;border:1px solid #e2e8f0;text-align:center;font-weight:700;">' + todayFa() + '</td>';
@@ -942,10 +942,10 @@
     html += '</tr>';
     html += '</table>';
 
-    html += '<div style="font-size:16px;font-weight:800;color:#1e293b;margin-bottom:14px;padding-right:10px;border-right:4px solid #6366f1;">🤝 تسویه حساب</div>';
+    html += '<div style="font-size:16px;font-weight:800;color:#1e293b;margin-bottom:14px;padding-right:10px;border-right:4px solid #6366f1;">تسویه حساب</div>';
 
     if (!debtorIds.length) {
-      html += '<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:18px;text-align:center;color:#059669;font-weight:700;font-size:13px;margin-bottom:28px;">✓ همه چیز تسویه است</div>';
+      html += '<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:18px;text-align:center;color:#059669;font-weight:700;font-size:13px;margin-bottom:28px;">همه چیز تسویه است</div>';
     } else {
       debtorIds.forEach(function (did) {
         var items = byDebtor[did];
@@ -980,7 +980,7 @@
     }
 
     if (sortedExpenses.length) {
-      html += '<div style="font-size:16px;font-weight:800;color:#1e293b;margin:28px 0 14px;padding-right:10px;border-right:4px solid #f59e0b;">🧾 تراکنش ها</div>';
+      html += '<div style="font-size:16px;font-weight:800;color:#1e293b;margin:28px 0 14px;padding-right:10px;border-right:4px solid #f59e0b;">تراکنش ها</div>';
 
       html += '<table style="width:100%;border-collapse:collapse;font-size:11.5px;table-layout:fixed;border:1px solid #e2e8f0;">';
       html += '<thead><tr style="background:#fffbeb;">';
@@ -993,7 +993,11 @@
       sortedExpenses.forEach(function (e, i) {
         var bens = (e.beneficiaryIds || []);
         var bensHtml = bens.length
-          ? bens.map(function (id) { return esc(personName(id)); }).join('، ')
+          ? bens.map(function (id, idx) {
+              var nm = esc(personName(id));
+              var sep = (idx < bens.length - 1) ? '،' : '';
+              return '<span style="white-space:nowrap;unicode-bidi:isolate;direction:rtl;">' + nm + sep + '</span>';
+            }).join('&nbsp;')
           : '—';
         var last = i === sortedExpenses.length - 1;
         var bb = last ? '' : 'border-bottom:1px solid #f1f5f9;';
@@ -1001,7 +1005,7 @@
         html += '<td style="padding:9px 8px;' + bb + 'color:#94a3b8;font-weight:600;font-size:11px;">' + (i + 1) + '</td>';
         html += '<td style="padding:9px 8px;' + bb + 'font-weight:700;color:#1e293b;word-break:break-word;line-height:1.4;">' + esc(e.title) + '</td>';
         html += '<td style="padding:9px 8px;' + bb + 'font-weight:600;color:#4f46e5;word-break:break-word;line-height:1.4;">' + esc(personName(e.payerId)) + '</td>';
-        html += '<td dir="rtl" style="padding:9px 8px;' + bb + 'color:#64748b;word-break:break-word;line-height:1.4;direction:rtl;text-align:right;unicode-bidi:embed;">' + bensHtml + '</td>';
+        html += '<td dir="rtl" style="padding:9px 8px;' + bb + 'color:#64748b;word-break:break-word;line-height:1.4;direction:rtl;text-align:right;">' + bensHtml + '</td>';
         html += '<td style="padding:9px 8px;' + bb + 'text-align:left;font-weight:800;color:#4f46e5;">' + money(e.amount) + '</td>';
         html += '</tr>';
       });
@@ -1035,7 +1039,7 @@
 
     var overlay = document.createElement('div');
     overlay.className = 'pdf-loading-overlay';
-    overlay.innerHTML = '<div class="spinner"></div><div>📄 در حال ساخت PDF...</div>';
+    overlay.innerHTML = '<div class="spinner"></div><div>در حال ساخت PDF...</div>';
     document.body.appendChild(overlay);
 
     var cleanup = function () {
@@ -1120,7 +1124,7 @@
         .save()
         .then(function () {
           cleanup();
-          showToast('✓ PDF دانلود شد');
+          showToast('PDF دانلود شد');
         })
         .catch(function (err) {
           console.error('PDF error:', err);
@@ -1306,7 +1310,7 @@
       setupBackupFile();
       setupNetworkIndicator();
       setupServiceWorker();
-      console.log('dongyar initialized ✓');
+      console.log('dongyar initialized');
     } catch (err) {
       console.error('dongyar init error:', err);
       alert('خطا در راه اندازی برنامه: ' + err.message);
