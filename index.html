@@ -276,7 +276,7 @@
 </head>
 <body>
 
-<div class="offline-bar" id="offlineBar">⚠️ حالت آفلاین — داده ها ذخیره می شوند</div>
+<div class="offline-bar" id="offlineBar">حالت آفلاین - داده ها ذخیره می شوند</div>
 
 <div class="app">
   <div class="header">
@@ -314,12 +314,12 @@
   </div>
 
   <div class="panel" id="panel-settle">
-    <div class="section-title">📊 وضعیت هر نفر</div>
+    <div class="section-title">وضعیت هر نفر</div>
     <div id="balancesList"></div>
-    <div class="section-title">🤝 راه حل تسویه</div>
+    <div class="section-title">راه حل تسویه</div>
     <div id="settlementsList"></div>
 
-    <div class="section-title">⚡ عملیات</div>
+    <div class="section-title">عملیات</div>
     <div class="actions-grid">
       <button type="button" class="action-card pdf" data-action="export-pdf">
         <span class="ac-icon">📄</span>
@@ -441,21 +441,13 @@
   }
 
   async function requestPersistentStorage() {
-    if (!navigator.storage || !navigator.storage.persist) {
-      console.log('Persistent Storage پشتیبانی نمی شود');
-      return false;
-    }
+    if (!navigator.storage || !navigator.storage.persist) return false;
     try {
       var already = await navigator.storage.persisted();
-      if (already) {
-        console.log('حافظه ی پایدار از قبل فعال بود');
-        return true;
-      }
+      if (already) return true;
       var granted = await navigator.storage.persist();
-      console.log('حافظه ی پایدار:', granted ? 'فعال شد' : 'رد شد');
       return granted;
     } catch (e) {
-      console.warn('Persistent storage error:', e);
       return false;
     }
   }
@@ -468,12 +460,12 @@
         people = Array.isArray(data.people) ? data.people : [];
         expenses = Array.isArray(data.expenses) ? data.expenses : [];
       }
-    } catch (e) { console.warn('خطا در خواندن داده ها:', e); }
+    } catch (e) {}
   }
   function saveState() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ people: people, expenses: expenses }));
-    } catch (e) { console.warn('خطا در ذخیره سازی:', e); }
+    } catch (e) {}
   }
 
   var toastTimer;
@@ -562,7 +554,7 @@
         '</div>' +
         '<div class="exp-meta">' +
           '<span class="tag payer">💳 <span>' + esc(personName(e.payerId)) + ' پرداخت کرد</span></span>' +
-          '<span class="tag">👥 <span>' + (bens.map(esc).join('، ') || '—') + '</span></span>' +
+          '<span class="tag">👥 <span>' + (bens.map(esc).join('، ') || '-') + '</span></span>' +
           '<span class="tag">÷ ' + money(share) + ' تومان هر نفر</span>' +
         '</div>' +
         '<div class="exp-actions">' +
@@ -816,11 +808,11 @@
       return;
     }
     var count = expenses.length;
-    if (!confirm('همه ی ' + count + ' تراکنش پاک شوند؟ (افراد باقی می مانند)\n\nپیشنهاد: قبل از پاک کردن، از پشتیبان گیری استفاده کنید.')) return;
+    if (!confirm('همه ی ' + count + ' تراکنش پاک شوند؟ (افراد باقی می مانند)')) return;
     expenses = [];
     saveState();
     renderAll();
-    showToast('تسویه شد — ' + money(count) + ' تراکنش پاک شد');
+    showToast('تسویه شد - ' + money(count) + ' تراکنش پاک شد');
   }
 
   function exportBackup() {
@@ -845,7 +837,6 @@
       setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
       showToast('پشتیبان دانلود شد');
     } catch (e) {
-      console.error(e);
       showToast('خطا در ساخت فایل پشتیبان');
     }
   }
@@ -870,8 +861,7 @@
         });
         if (!validPeople || !validExpenses) throw new Error('داده های فایل خراب است');
 
-        if (!confirm('داده های فعلی (' + people.length + ' نفر، ' + expenses.length + ' تراکنش) با پشتیبان (' +
-                     data.people.length + ' نفر، ' + data.expenses.length + ' تراکنش) جایگزین شوند؟')) return;
+        if (!confirm('داده های فعلی با پشتیبان جایگزین شوند؟')) return;
 
         people = data.people;
         expenses = data.expenses;
@@ -879,7 +869,6 @@
         renderAll();
         showToast('پشتیبان بازگردانی شد');
       } catch (err) {
-        console.error(err);
         showToast('خطا: ' + err.message);
       }
     };
@@ -992,13 +981,17 @@
       html += '</tr></thead><tbody>';
       sortedExpenses.forEach(function (e, i) {
         var bens = (e.beneficiaryIds || []);
-        var bensHtml = bens.length
-          ? bens.map(function (id, idx) {
-              var nm = esc(personName(id));
-              var sep = (idx < bens.length - 1) ? '،' : '';
-              return '<span style="white-space:nowrap;unicode-bidi:isolate;direction:rtl;">' + nm + sep + '</span>';
-            }).join('&nbsp;')
-          : '—';
+        var bensHtml = '';
+        if (bens.length) {
+          for (var k = 0; k < bens.length; k++) {
+            var nm = esc(personName(bens[k]));
+            var suffix = (k < bens.length - 1) ? '،' : '';
+            bensHtml += '<span style="display:inline-block;white-space:nowrap;direction:rtl;">' + nm + suffix + '</span>';
+            if (k < bens.length - 1) bensHtml += ' ';
+          }
+        } else {
+          bensHtml = '-';
+        }
         var last = i === sortedExpenses.length - 1;
         var bb = last ? '' : 'border-bottom:1px solid #f1f5f9;';
         html += '<tr>';
@@ -1111,7 +1104,7 @@
                   'direction:rtl !important;' +
                   'transform:none !important;';
               }
-            } catch (e) { console.warn('onclone error:', e); }
+            } catch (e) {}
           }
         },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
@@ -1127,7 +1120,6 @@
           showToast('PDF دانلود شد');
         })
         .catch(function (err) {
-          console.error('PDF error:', err);
           cleanup();
           printFallback(htmlContent);
         });
@@ -1161,7 +1153,7 @@
     );
     w.document.close();
     setTimeout(function () {
-      try { w.focus(); w.print(); } catch (e) { console.error(e); }
+      try { w.focus(); w.print(); } catch (e) {}
     }, 700);
   }
 
@@ -1212,7 +1204,6 @@
     inp.addEventListener('input', function () {
       var v = inp.value
         .replace(/[۰-۹]/g, function (d) { return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)); })
-        .replace(/[٠-٩]/g, function (d) { return String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)); })
         .replace(/[^\d]/g, '');
       inp.value = v ? Number(v).toLocaleString('en-US') : '';
     });
@@ -1275,33 +1266,23 @@
           return Promise.all(keys.map(function (k) { return caches.delete(k); }));
         }).then(function () {
           window.location.replace(window.location.pathname);
-        }).catch(function (err) {
-          console.warn('reset error:', err);
         });
         return;
       }
 
       window.addEventListener('load', function () {
         navigator.serviceWorker.register('sw.js', { scope: './', updateViaCache: 'none' })
-          .then(function (reg) {
-            console.log('Service Worker ثبت شد:', reg.scope);
-          })
-          .catch(function (err) {
-            console.log('خطا در ثبت Service Worker:', err);
-          });
+          .then(function (reg) {})
+          .catch(function (err) {});
       });
-    } catch (err) {
-      console.warn('setupServiceWorker error:', err);
-    }
+    } catch (err) {}
   }
 
   function init() {
     try {
       loadState();
       renderAll();
-
       requestPersistentStorage();
-
       document.addEventListener('click', handleClick, false);
       document.addEventListener('keydown', handleKeydown, false);
       setupAmountFormatting();
@@ -1310,9 +1291,7 @@
       setupBackupFile();
       setupNetworkIndicator();
       setupServiceWorker();
-      console.log('dongyar initialized');
     } catch (err) {
-      console.error('dongyar init error:', err);
       alert('خطا در راه اندازی برنامه: ' + err.message);
     }
   }
