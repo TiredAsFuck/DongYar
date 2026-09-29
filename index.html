@@ -906,6 +906,8 @@
       });
     });
 
+    var RLM = '\u200F';
+
     var html = '';
     html += '<div style="direction:rtl;background:#ffffff;color:#1e293b;font-family:Vazirmatn,Tahoma,sans-serif;padding:56px 60px 44px;box-sizing:border-box;width:100%;font-size:13px;line-height:1.75;">';
 
@@ -981,13 +983,13 @@
         var bens = (e.beneficiaryIds || []);
         var bensHtml = '';
         if (bens.length) {
-          var cellsHtml = '';
+          var parts = [];
           for (var k = 0; k < bens.length; k++) {
             var nm = esc(personName(bens[k]));
-            var suffix = (k < bens.length - 1) ? '،' : '';
-            cellsHtml += '<td style="padding:0;white-space:nowrap;vertical-align:middle;font-weight:600;color:#64748b;direction:rtl;text-align:right;">' + nm + suffix + '</td>';
+            var isLast = (k === bens.length - 1);
+            parts.push(RLM + nm + (isLast ? '' : '،'));
           }
-          bensHtml = '<table dir="rtl" style="border-collapse:separate;border-spacing:6px 0;margin:0;padding:0;display:inline-table;vertical-align:middle;"><tr>' + cellsHtml + '</tr></table>';
+          bensHtml = parts.join(' ');
         } else {
           bensHtml = '-';
         }
@@ -997,7 +999,7 @@
         html += '<td style="padding:9px 8px;' + bb + 'color:#94a3b8;font-weight:600;font-size:11px;">' + (i + 1) + '</td>';
         html += '<td style="padding:9px 8px;' + bb + 'font-weight:700;color:#1e293b;word-break:break-word;line-height:1.4;">' + esc(e.title) + '</td>';
         html += '<td style="padding:9px 8px;' + bb + 'font-weight:600;color:#4f46e5;word-break:break-word;line-height:1.4;">' + esc(personName(e.payerId)) + '</td>';
-        html += '<td dir="rtl" style="padding:9px 8px;' + bb + 'word-break:break-word;line-height:1.4;text-align:right;">' + bensHtml + '</td>';
+        html += '<td dir="rtl" style="padding:9px 8px;' + bb + 'color:#64748b;word-break:break-word;line-height:1.4;direction:rtl;text-align:right;">' + RLM + bensHtml + '</td>';
         html += '<td style="padding:9px 8px;' + bb + 'text-align:left;font-weight:800;color:#4f46e5;">' + money(e.amount) + '</td>';
         html += '</tr>';
       });
