@@ -242,8 +242,11 @@
   }
   .offline-bar.show{transform:translateY(0)}
 
+  /* ✅ تغییر کلیدی: absolute به جای fixed */
   #pdfContainer{
-    position: fixed;top:0;left:0;
+    position: absolute;
+    top: 0;
+    left: 0;
     width:794px;min-width:794px;max-width:794px;
     background:#ffffff;direction:rtl;
     font-family:'Vazirmatn',Tahoma,sans-serif;color:#1e293b;
@@ -389,7 +392,9 @@
 <div class="toast" id="toast"></div>
 <div id="pdfContainer"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- ✅ کتابخانه های جدید و معتبر -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 (function () {
   'use strict';
@@ -979,28 +984,14 @@
       html += '</tr></thead><tbody>';
       sortedExpenses.forEach(function (e, i) {
         var bens = (e.beneficiaryIds || []);
-        var bensHtml = '';
-        if (bens.length) {
-          var parts = [];
-          for (var k = 0; k < bens.length; k++) {
-            var nm = esc(personName(bens[k]));
-            if (k < bens.length - 1) {
-              parts.push(nm + '،');
-            } else {
-              parts.push(nm);
-            }
-          }
-          bensHtml = parts.join(' ');
-        } else {
-          bensHtml = '-';
-        }
+        var bensText = bens.length ? bens.map(personName).join('، ') : '-';
         var last = i === sortedExpenses.length - 1;
         var bb = last ? '' : 'border-bottom:1px solid #f1f5f9;';
         html += '<tr>';
         html += '<td style="padding:9px 8px;' + bb + 'color:#94a3b8;font-weight:600;font-size:11px;">' + (i + 1) + '</td>';
         html += '<td style="padding:9px 8px;' + bb + 'font-weight:700;color:#1e293b;word-break:break-word;line-height:1.4;">' + esc(e.title) + '</td>';
         html += '<td style="padding:9px 8px;' + bb + 'font-weight:600;color:#4f46e5;word-break:break-word;line-height:1.4;">' + esc(personName(e.payerId)) + '</td>';
-        html += '<td style="padding:9px 8px;' + bb + 'color:#64748b;word-break:break-word;line-height:1.4;">' + bensHtml + '</td>';
+        html += '<td style="padding:9px 8px;' + bb + 'color:#64748b;word-break:break-word;line-height:1.4;">' + esc(bensText) + '</td>';
         html += '<td style="padding:9px 8px;' + bb + 'text-align:left;font-weight:800;color:#4f46e5;">' + money(e.amount) + '</td>';
         html += '</tr>';
       });
@@ -1015,9 +1006,21 @@
     return html;
   }
 
+  /* ============================================================
+     ✅ exportPDF جدید با html2canvas + jsPDF مستقیم
+     ============================================================ */
   function exportPDF() {
     if (!people.length) {
       showToast('ابتدا افراد را اضافه کنید');
+      return;
+    }
+
+    if (typeof window.html2canvas === 'undefined') {
+      showToast('خطا: html2canvas لود نشده');
+      return;
+    }
+    if (!window.jspdf || typeof window.jspdf.jsPDF === 'undefined') {
+      showToast('خطا: jsPDF لود نشده');
       return;
     }
 
@@ -1043,120 +1046,62 @@
       if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     };
 
-    var generate = function () {
-      if (typeof window.html2pdf === 'undefined') {
-        cleanup();
-        printFallback(htmlContent);
-        return;
-      }
+    // فورس layout
+    void container.offsetHeight;
 
-      var fullHeight = container.scrollHeight || 1123;
-      var filename = 'dongyar-settlement-' + fileStamp() + '.pdf';
+    window.html2canvas(container, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      width: PDF_WIDTH,
+      windowWidth: PDF_WIDTH
+    }).then(function (canvas) {
+      try {
+        var jsPDF = window.jspdf.jsPDF;
+        var pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+        var pageWidth = pdf.internal.pageSize.getWidth();
+        var pageHeight = pdf.internal.pageSize.getHeight();
 
-      var opt = {
-        margin: 0,
-        filename: filename,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: '#ffffff',
-          logging: false,
-          width: PDF_WIDTH,
-          height: fullHeight,
-          windowWidth: PDF_WIDTH,
-          windowHeight: fullHeight,
-          x: 0, y: 0, scrollX: 0, scrollY: 0,
-          onclone: function (clonedDoc) {
-            try {
-              var htmlEl = clonedDoc.documentElement;
-              var bodyEl = clonedDoc.body;
-              var el = clonedDoc.getElementById('pdfContainer');
+        var imgWidth = pageWidth;
+        var imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-              if (htmlEl) {
-                htmlEl.setAttribute('dir', 'rtl');
-                htmlEl.setAttribute('lang', 'fa');
-                htmlEl.style.cssText =
-                  'width:' + PDF_WIDTH + 'px !important;' +
-                  'min-width:' + PDF_WIDTH + 'px !important;' +
-                  'max-width:' + PDF_WIDTH + 'px !important;' +
-                  'margin:0 !important;padding:0 !important;' +
-                  'overflow:visible !important;background:#ffffff !important;';
-              }
-              if (bodyEl) {
-                bodyEl.style.cssText =
-                  'width:' + PDF_WIDTH + 'px !important;' +
-                  'min-width:' + PDF_WIDTH + 'px !important;' +
-                  'max-width:' + PDF_WIDTH + 'px !important;' +
-                  'margin:0 !important;padding:0 !important;' +
-                  'overflow:visible !important;background:#ffffff !important;' +
-                  'direction:rtl !important;position:relative !important;';
-              }
-              if (el) {
-                el.style.cssText =
-                  'display:block !important;' +
-                  'position:absolute !important;' +
-                  'top:0 !important;left:0 !important;right:auto !important;' +
-                  'width:' + PDF_WIDTH + 'px !important;' +
-                  'min-width:' + PDF_WIDTH + 'px !important;' +
-                  'max-width:' + PDF_WIDTH + 'px !important;' +
-                  'margin:0 !important;padding:0 !important;' +
-                  'box-sizing:border-box !important;' +
-                  'background:#ffffff !important;' +
-                  'direction:rtl !important;' +
-                  'transform:none !important;';
-              }
-            } catch (e) {}
+        if (imgHeight <= pageHeight) {
+          pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, imgWidth, imgHeight);
+        } else {
+          var mmPerPx = pageWidth / canvas.width;
+          var pageHeightPx = pageHeight / mmPerPx;
+          var remaining = canvas.height;
+          var srcY = 0;
+          var i = 0;
+          while (remaining > 0) {
+            if (i > 0) pdf.addPage();
+            var sliceH = Math.min(pageHeightPx, remaining);
+            var tc = document.createElement('canvas');
+            tc.width = canvas.width;
+            tc.height = Math.ceil(sliceH);
+            tc.getContext('2d').drawImage(canvas, 0, srcY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+            pdf.addImage(tc.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, imgWidth, sliceH * mmPerPx);
+            srcY += sliceH;
+            remaining -= sliceH;
+            i++;
           }
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['css', 'legacy'], avoid: ['tr'] }
-      };
+        }
 
-      window.html2pdf()
-        .set(opt)
-        .from(container)
-        .save()
-        .then(function () {
-          cleanup();
-          showToast('PDF دانلود شد');
-        })
-        .catch(function (err) {
-          cleanup();
-          printFallback(htmlContent);
-        });
-    };
-
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready
-        .then(function () { setTimeout(generate, 300); })
-        .catch(function () { setTimeout(generate, 600); });
-    } else {
-      setTimeout(generate, 700);
-    }
-  }
-
-  function printFallback(htmlContent) {
-    var w = window.open('', '_blank');
-    if (!w) {
-      showToast('پنجره ی جدید مسدود شد. لطفاً اجازه بدهید.');
-      return;
-    }
-    w.document.open();
-    w.document.write(
-      '<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8">' +
-      '<title>گزارش تسویه - دنگ یار</title>' +
-      '<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">' +
-      '<style>' +
-      '*{box-sizing:border-box} body{margin:0;padding:0;background:#fff;font-family:Vazirmatn,Tahoma,sans-serif;}' +
-      '@page{size:A4;margin:10mm;}' +
-      '@media print{ tr{page-break-inside:avoid;} }' +
-      '</style></head><body>' + htmlContent + '</body></html>'
-    );
-    w.document.close();
-    setTimeout(function () {
-      try { w.focus(); w.print(); } catch (e) {}
-    }, 700);
+        var filename = 'dongyar-settlement-' + fileStamp() + '.pdf';
+        pdf.save(filename);
+        cleanup();
+        showToast('PDF دانلود شد');
+      } catch (err) {
+        console.error('PDF error:', err);
+        cleanup();
+        showToast('خطا در ساخت PDF: ' + err.message);
+      }
+    }).catch(function (err) {
+      console.error('html2canvas error:', err);
+      cleanup();
+      showToast('خطا در ساخت تصویر: ' + err.message);
+    });
   }
 
   function handleClick(e) {
