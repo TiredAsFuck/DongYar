@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dongyar-v7';
+const CACHE_NAME = 'dongyar-v8';
 const APP_SHELL = [
   './',
   './index.html',
