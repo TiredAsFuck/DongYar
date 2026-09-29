@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>دنگ‌یار</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#6366f1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="دنگ‌یار">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+:root{--primary:#6366f1;--primary-dark:#4f46e5;--primary-soft:#eef2ff;--green:#10b981;--red:#ef4444;--red-soft:#fef2f2;--text:#1e293b;--muted:#64748b;--border:#e2e8f0}
+body{font-family:'Vazirmatn',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;background:linear-gradient(180deg,#eef2ff 0%,#f8fafc 260px,#f8fafc 100%);background-attachment:fixed;color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;padding:0 0 48px;-webkit-tap-highlight-color:transparent}
+.app{max-width:680px;margin:0 auto;padding:0 16px}
+.header{padding:30px 0 18px;text-align:center}
+.logo{font-size:27px;font-weight:800;line-height:1.2}
+.logo span{background:linear-gradient(135deg,#6366f1,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-size:12.5px;color:var(--muted);margin-top:6px}
+.summary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-radius:20px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:14px;box-shadow:0 12px 30px -12px rgba(99,102,241,.75);margin-bottom:18px}
+.summary .lbl{font-size:12px;opacity:.85;margin-bottom:4px}
+.summary .val{font-size:21px;font-weight:800;white-space:nowrap}
+.summary .val small{font-size:12px;font-weight:500;opacity:.85;margin-right:3px}
+.summary .people-count{font-size:12.5px;background:rgba(255,255,255,.2);padding:7px 13px;border-radius:999px;font-weight:600;white-space:nowrap}
+.tabs{display:flex;gap:5px;background:#fff;padding:5px;border-radius:14px;margin-bottom:16px;box-shadow:0 2px 12px rgba(15,23,42,.07)}
+.tab{flex:1;border:0;background:transparent;padding:11px 6px;border-radius:10px;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:.2s}
+.tab.active{background:var(--primary-soft);color:var(--primary-dark)}
+.panel{display:none}
+.panel.active{display:block}
+.btn{font-family:inherit;border:0;border-radius:12px;padding:12px 18px;font-size:14px;font-weight:700;cursor:pointer;transition:.18s}
+.btn.primary{background:var(--primary);color:#fff;box-shadow:0 8px 18px -8px rgba(99,102,241,.9)}
+.btn.ghost{background:#f1f5f9;color:var(--text)}
+.btn.block{width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
+.section-title{font-size:13px;font-weight:700;color:var(--muted);margin:20px 4px 10px}
+.expense{background:#fff;border-radius:15px;padding:14px 15px;margin-bottom:10px;border:1px solid #f1f5f9;box-shadow:0 2px 12px rgba(15,23,42,.05)}
+.exp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.exp-title{font-size:15px;font-weight:700;line-height:1.45;word-break:break-word}
+.exp-amt{font-size:15px;font-weight:800;color:var(--primary-dark);white-space:nowrap;flex-shrink:0}
+.exp-amt small{font-size:10.5px;font-weight:500;color:var(--muted);margin-right:3px}
+.exp-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{background:#f1f5f9;border-radius:8px;padding:5px 9px;font-size:11.5px;color:#475569;font-weight:500;display:inline-flex;align-items:center;gap:4px;max-width:100%}
+.tag.payer{background:var(--primary-soft);color:var(--primary-dark)}
+.tag span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.exp-actions{display:flex;gap:8px;margin-top:11px;justify-content:flex-end}
+.mini{font-family:inherit;font-size:12px;font-weight:600;padding:6px 12px;border-radius:9px;background:#f1f5f9;color:#475569;border:0;cursor:pointer}
+.mini.danger{background:var(--red-soft);color:#dc2626}
+.person{display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:9px;border:1px solid #f1f5f9;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+.avatar{width:38px;height:38px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;background:linear-gradient(135deg,#6366f1,#a855f7)}
+.person .name{flex:1;font-weight:600;font-size:14.5px}
+.icon-del{width:32px;height:32px;border-radius:9px;border:0;background:var(--red-soft);color:#dc2626;cursor:pointer;font-size:15px;line-height:1}
+.add-row{display:flex;gap:8px;margin-bottom:16px}
+.add-row input{flex:1}
+input[type=text]{width:100%;font-family:inherit;font-size:14.5px;padding:13px 14px;border-radius:12px;border:1.5px solid var(--border);background:#fff;color:var(--text);outline:none;transition:.18s}
+input[type=text]:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(99,102,241,.12)}
+input::placeholder{color:#94a3b8}
+.bal-row{display:flex;align-items:center;gap:12px;padding:13px 14px;background:#fff;border-radius:14px;margin-bottom:9px;border:1px solid #f1f5f9;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+.bal-row .name{flex:1;font-weight:600;font-size:14.5px}
+.bal-val{font-size:14px;font-weight:800;white-space:nowrap}
+.bal-val.pos{color:var(--green)}
+.bal-val.neg{color:var(--red)}
+.bal-val.zero{color:#94a3b8;font-weight:600;font-size:12.5px}
+.avatar.pos{background:linear-gradient(135deg,#10b981,#34d399)}
+.avatar.neg{background:linear-gradient(135deg,#ef4444,#f87171)}
+.avatar.zero{background:linear-gradient(135deg,#cbd5e1,#94a3b8)}
+.settle-group{background:#fff;border-radius:16px;padding:14px;margin-bottom:14px;border:1px solid #f1f5f9;box-shadow:0 2px 12px rgba(15,23,42,.05)}
+.settle-group-head{display:flex;align-items:center;gap:10px;padding-bottom:10px;margin-bottom:10px;border-bottom:1px dashed #e2e8f0}
+.settle-group-title{font-size:13px;color:#475569;line-height:1.5}
+.settle-group-title b{color:var(--text);font-weight:700}
+.settle-row{display:flex;align-items:center;gap:12px;padding:10px 12px;background:#f8fafc;border-radius:11px;margin-bottom:7px;border:1px solid #f1f5f9}
+.settle-row:last-child{margin-bottom:0}
+.settle-arrow{color:var(--red);font-size:18px;font-weight:800;flex-shrink:0}
+.settle-text{flex:1;font-size:13px;line-height:1.6;color:#475569}
+.settle-text b{color:var(--text);font-weight:700}
+.settle-amt{font-size:13.5px;font-weight:800;color:var(--primary-dark);white-space:nowrap;flex-shrink:0}
+.settle-amt small{font-size:10.5px;font-weight:500;color:var(--muted);margin-right:3px}
+.actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.action-card{background:#fff;border-radius:15px;padding:16px 12px;border:1.5px solid #f1f5f9;box-shadow:0 2px 12px rgba(15,23,42,.05);display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;font-family:inherit;transition:.2s;text-align:center;color:var(--text)}
+.action-card .ac-icon{font-size:26px;line-height:1}
+.action-card .ac-title{font-size:13px;font-weight:700}
+.action-card .ac-desc{font-size:10.5px;color:var(--muted);line-height:1.5}
+.action-card.success{border-color:#a7f3d0;background:linear-gradient(135deg,#ecfdf5,#f0fdf4)}
+.action-card.success .ac-title{color:#059669}
+.action-card.pdf{border-color:#c7d2fe;background:linear-gradient(135deg,#eef2ff,#f5f3ff)}
+.action-card.pdf .ac-title{color:var(--primary-dark)}
+.action-card.backup{border-color:#fde68a;background:linear-gradient(135deg,#fffbeb,#fef3c7)}
+.action-card.backup .ac-title{color:#b45309}
+.action-card.restore{border-color:#ddd6fe;background:linear-gradient(135deg,#f5f3ff,#ede9fe)}
+.action-card.restore .ac-title{color:#7c3aed}
+.action-card.warning{border-color:#fecaca;background:linear-gradient(135deg,#fef2f2,#fff1f2)}
+.action-card.warning .ac-title{color:#dc2626}
+.empty{text-align:center;padding:44px 20px;color:var(--muted);background:#fff;border-radius:16px;border:1.5px dashed #e2e8f0}
+.empty .ico{font-size:36px;margin-bottom:12px;opacity:.7}
+.empty .t{font-size:14px;font-weight:600;color:#475569;margin-bottom:5px}
+.empty .d{font-size:12.5px;line-height:1.7}
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center;z-index:100}
+.modal-backdrop.open{display:flex}
+.modal{background:#fff;width:100%;max-width:680px;border-radius:26px 26px 0 0;max-height:92vh;display:flex;flex-direction:column;animation:slideUp .3s cubic-bezier(.32,.72,0,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@media(min-width:640px){.modal-backdrop{align-items:center;padding:20px}.modal{border-radius:26px}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid #f1f5f9;flex-shrink:0}
+.modal-header h2{font-size:16.5px;font-weight:800;margin:0}
+.close-btn{width:34px;height:34px;border-radius:10px;border:0;background:#f1f5f9;color:#64748b;font-size:16px;cursor:pointer;line-height:1}
+.modal-body{padding:18px 20px;overflow-y:auto;flex:1}
+.modal-footer{display:flex;gap:10px;padding:14px 20px calc(18px + env(safe-area-inset-bottom));border-top:1px solid #f1f5f9;flex-shrink:0}
+.modal-footer .btn{flex:1}
+.field{margin-bottom:18px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:12.5px;font-weight:700;color:#475569;margin-bottom:8px}
+.field label .req{color:var(--red)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:9px 15px;border-radius:999px;border:1.5px solid var(--border);background:#fff;font-family:inherit;font-size:13.5px;font-weight:600;color:#475569;cursor:pointer;transition:.15s}
+.chip.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.hint-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.hint-row label{margin-bottom:0}
+.link-btn{background:none;border:0;font-family:inherit;font-size:12px;font-weight:700;color:var(--primary);cursor:pointer;padding:2px 4px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e293b;color:#fff;font-size:13px;font-weight:600;padding:12px 20px;border-radius:12px;opacity:0;pointer-events:none;transition:.3s;z-index:300;box-shadow:0 10px 30px rgba(0,0,0,.25);font-family:inherit;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.offline-bar{position:fixed;top:0;left:0;right:0;z-index:400;background:#f59e0b;color:#fff;text-align:center;font-size:12px;font-weight:700;padding:6px;transform:translateY(-100%);transition:.3s;pointer-events:none}
+.offline-bar.show{transform:translateY(0)}
+#pdfContainer{position:fixed;top:0;left:0;width:794px;min-width:794px;max-width:794px;background:#fff;direction:rtl;font-family:'Vazirmatn',Tahoma,sans-serif;color:#1e293b;padding:0;box-sizing:border-box;display:none;z-index:-9999;pointer-events:none}
+#pdfContainer.active{display:block}
+.pdf-loading-overlay{position:fixed;inset:0;z-index:99999;background:rgba(15,23,42,.85);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Vazirmatn',sans-serif;font-size:15px;font-weight:700;flex-direction:column;gap:14px}
+.pdf-loading-overlay .spinner{width:38px;height:38px;border-radius:50%;border:4px solid rgba(255,255,255,.25);border-top-color:#fff;animation:pdfspin .8s linear infinite}
+@keyframes pdfspin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="offline-bar" id="offlineBar">⚠️ حالت آفلاین</div>
+
+<div class="app">
+<div class="header">
+<div class="logo">دنگ<span>‌یار</span></div>
+<div class="sub">محاسبه‌ی دقیق دنگ و تسویه‌حساب</div>
+</div>
+
+<div class="summary">
+<div>
+<div class="lbl">جمع کل هزینه‌ها</div>
+<div class="val" id="totalAmount">۰ <small>تومان</small></div>
+</div>
+<div class="people-count" id="peopleCount">۰ نفر</div>
+</div>
+
+<div class="tabs">
+<button type="button" class="tab active" data-action="tab" data-tab="expenses">هزینه‌ها</button>
+<button type="button" class="tab" data-action="tab" data-tab="people">افراد</button>
+<button type="button" class="tab" data-action="tab" data-tab="settle">تسویه</button>
+</div>
+
+<div class="panel active" id="panel-expenses">
+<button type="button" class="btn primary block" data-action="open-add-expense" style="margin-bottom:16px">＋ افزودن هزینه</button>
+<div id="expensesList"></div>
+</div>
+
+<div class="panel" id="panel-people">
+<div class="add-row">
+<input type="text" id="personName" placeholder="نام شخص" autocomplete="off">
+<button type="button" class="btn primary" data-action="add-person">افزودن</button>
+</div>
+<div id="peopleList"></div>
+</div>
+
+<div class="panel" id="panel-settle">
+<div class="section-title">📊 وضعیت هر نفر</div>
+<div id="balancesList"></div>
+<div class="section-title">🤝 راه‌حل تسویه</div>
+<div id="settlementsList"></div>
+<div class="section-title">⚡ عملیات</div>
+<div class="actions-grid">
+<button type="button" class="action-card pdf" data-action="export-pdf"><span class="ac-icon">📄</span><span class="ac-title">خروجی PDF</span><span class="ac-desc">تراکنش‌ها + تسویه</span></button>
+<button type="button" class="action-card success" data-action="settle-done"><span class="ac-icon">✅</span><span class="ac-title">تسویه شد</span><span class="ac-desc">پاک کردن تراکنش‌ها</span></button>
+<button type="button" class="action-card backup" data-action="export-backup"><span class="ac-icon">💾</span><span class="ac-title">پشتیبان‌گیری</span><span class="ac-desc">ذخیره JSON</span></button>
+<button type="button" class="action-card restore" data-action="import-backup"><span class="ac-icon">📥</span><span class="ac-title">بازگردانی</span><span class="ac-desc">بارگذاری پشتیبان</span></button>
+<button type="button" class="action-card warning" data-action="reset-all" style="grid-column:1/-1"><span class="ac-icon">🗑</span><span class="ac-title">پاک کردن همه‌ی داده‌ها</span><span class="ac-desc">حذف افراد و هزینه‌ها</span></button>
+</div>
+<input type="file" id="backupFile" accept=".json,application/json" style="display:none">
+</div>
+</div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+<div class="modal" role="dialog">
+<div class="modal-header">
+<h2 id="modalTitle">افزودن هزینه</h2>
+<button type="button" class="close-btn" data-action="close-modal">✕</button>
+</div>
+<div class="modal-body">
+<div class="field"><label>عنوان هزینه <span class="req">*</span></label><input type="text" id="expTitle" placeholder="مثلاً شام" autocomplete="off"></div>
+<div class="field"><label>مبلغ (تومان) <span class="req">*</span></label><input type="text" id="expAmount" inputmode="numeric" placeholder="۰" autocomplete="off"></div>
+<div class="field"><label>چه کسی خرج کرده؟ <span class="req">*</span></label><div class="chips" id="payerChips"></div></div>
+<div class="field">
+<div class="hint-row"><label>برای چه کسانی خرج شده؟ <span class="req">*</span></label><button type="button" class="link-btn" data-action="toggle-all" id="toggleAll">انتخاب همه</button></div>
+<div class="chips" id="benChips"></div>
+</div>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn ghost" data-action="close-modal">انصراف</button>
+<button type="button" class="btn primary" data-action="save-expense">ذخیره</button>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div id="pdfContainer"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+(function(){
+'use strict';
+var STORAGE_KEY='dongyar_v1';
+var people=[],expenses=[],editingExpenseId=null,modalPayerId=null,modalBenIds=new Set();
+
+function qs(s){return document.querySelector(s)}
+function qsa(s){return Array.prototype.slice.call(document.querySelectorAll(s))}
+function uid(){return 'id_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
+function money(n){try{return new Intl.NumberFormat('fa-IR').format(Math.round(Number(n)||0))}catch(e){return String(Math.round(Number(n)||0))}}
+function findPerson(id){for(var i=0;i<people.length;i++)if(people[i].id===id)return people[i];return null}
+function personName(id){var p=findPerson(id);return p?p.name:'نامشخص'}
+function personIndex(id){for(var i=0;i<people.length;i++)if(people[i].id===id)return i;return 999999}
+function firstChar(n){var t=String(n||'').trim();return (t.charAt(0)||'؟').toUpperCase()}
+function todayFa(){try{return new Date().toLocaleDateString('fa-IR')}catch(e){return new Date().toISOString().slice(0,10)}}
+function fileStamp(){var d=new Date();function p(n){return n<10?'0'+n:''+n}return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())}
+
+function requestPersistentStorage(){
+  if(!navigator.storage||!navigator.storage.persist)return;
+  navigator.storage.persisted().then(function(a){if(!a)navigator.storage.persist()}).catch(function(){});
+}
+
+function loadState(){try{var r=localStorage.getItem(STORAGE_KEY);if(r){var d=JSON.parse(r);people=Array.isArray(d.people)?d.people:[];expenses=Array.isArray(d.expenses)?d.expenses:[]}}catch(e){}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({people:people,expenses:expenses}))}catch(e){}}
+
+var toastTimer;
+function showToast(m){var el=qs('#toast');if(!el)return;el.textContent=m;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove('show')},2400)}
+
+function switchTab(n){qsa('.tab').forEach(function(t){t.classList.toggle('active',t.getAttribute('data-tab')===n)});qsa('.panel').forEach(function(p){p.classList.toggle('active',p.id==='panel-'+n)})}
+
+function computeBalances(){var b={};people.forEach(function(p){b[p.id]=0});expenses.forEach(function(e){var bens=(e.beneficiaryIds||[]).filter(function(id){return id in b});if(!bens.length)return;if(e.payerId in b)b[e.payerId]+=Number(e.amount)||0;var sh=(Number(e.amount)||0)/bens.length;bens.forEach(function(id){b[id]-=sh})});return b}
+
+function computeSettlements(){var debts={};expenses.forEach(function(e){var bens=(e.beneficiaryIds||[]);if(!bens.length)return;var sh=(Number(e.amount)||0)/bens.length;if(sh<=0)return;bens.forEach(function(bi){if(bi===e.payerId)return;var k=bi+'|'+e.payerId;debts[k]=(debts[k]||0)+sh})});var res=[],seen={};Object.keys(debts).forEach(function(k){var p=k.split('|'),a=p[0],b=p[1];var pk=a<b?(a+'||'+b):(b+'||'+a);if(seen[pk])return;seen[pk]=true;var ab=debts[a+'|'+b]||0,ba=debts[b+'|'+a]||0;var net=ab-ba;if(net>0.5)res.push({from:a,to:b,amount:net});else if(net<-0.5)res.push({from:b,to:a,amount:-net})});return res}
+
+function renderSummary(){var t=expenses.reduce(function(s,e){return s+(Number(e.amount)||0)},0);qs('#totalAmount').innerHTML=money(t)+' <small>تومان</small>';qs('#peopleCount').textContent=money(people.length)+' نفر'}
+
+function renderExpenses(){var el=qs('#expensesList');if(!expenses.length){el.innerHTML='<div class="empty"><div class="ico">🧾</div><div class="t">هنوز هزینه‌ای ثبت نشده</div><div class="d">با دکمه‌ی بالا اضافه کنید</div></div>';return}el.innerHTML=expenses.map(function(e){var bens=(e.beneficiaryIds||[]).map(personName);var sh=(Number(e.amount)||0)/Math.max(bens.length,1);return '<div class="expense"><div class="exp-head"><div class="exp-title">'+esc(e.title)+'</div><div class="exp-amt">'+money(e.amount)+'<small>تومان</small></div></div><div class="exp-meta"><span class="tag payer">💳 <span>'+esc(personName(e.payerId))+' پرداخت کرد</span></span><span class="tag">👥 <span>'+(bens.map(esc).join('، ')||'—')+'</span></span><span class="tag">÷ '+money(sh)+' تومان</span></div><div class="exp-actions"><button type="button" class="mini" data-action="edit-expense" data-id="'+e.id+'">ویرایش</button><button type="button" class="mini danger" data-action="delete-expense" data-id="'+e.id+'">حذف</button></div></div>'}).join('')}
+
+function renderPeople(){var el=qs('#peopleList');if(!people.length){el.innerHTML='<div class="empty"><div class="ico">👤</div><div class="t">هنوز کسی اضافه نشده</div></div>';return}el.innerHTML=people.map(function(p){return '<div class="person"><div class="avatar">'+esc(firstChar(p.name))+'</div><div class="name">'+esc(p.name)+'</div><button type="button" class="icon-del" data-action="delete-person" data-id="'+p.id+'">🗑</button></div>'}).join('')}
+
+function renderSettle(){var balEl=qs('#balancesList'),setEl=qs('#settlementsList');if(!people.length){balEl.innerHTML='<div class="empty"><div class="ico">⚖️</div><div class="t">اطلاعاتی نیست</div></div>';setEl.innerHTML='';return}var bal=computeBalances();balEl.innerHTML=people.map(function(p){var v=bal[p.id]||0;var cls='zero',txt='تسویه';if(v>0.5){cls='pos';txt=money(v)+' تومان طلب'}else if(v<-0.5){cls='neg';txt=money(-v)+' تومان بدهی'}return '<div class="bal-row"><div class="avatar '+cls+'">'+esc(firstChar(p.name))+'</div><div class="name">'+esc(p.name)+'</div><div class="bal-val '+cls+'">'+txt+'</div></div>'}).join('');if(!expenses.length){setEl.innerHTML='<div class="empty"><div class="ico">🧮</div><div class="t">هزینه‌ای ثبت نشده</div></div>';return}var st=computeSettlements();if(!st.length){setEl.innerHTML='<div class="empty"><div class="ico">✅</div><div class="t">همه‌چیز تسویه است!</div></div>';return}var g={},ord=[];st.forEach(function(s){if(!g[s.from]){g[s.from]=[];ord.push(s.from)}g[s.from].push(s)});ord.sort(function(a,b){return personIndex(a)-personIndex(b)});ord.forEach(function(did){g[did].sort(function(a,b){return personIndex(a.to)-personIndex(b.to)})});var html='';ord.forEach(function(did){var items=g[did];var tot=items.reduce(function(s,i){return s+i.amount},0);html+='<div class="settle-group"><div class="settle-group-head"><div class="avatar neg">'+esc(firstChar(personName(did)))+'</div><div class="settle-group-title"><b>'+esc(personName(did))+'</b> باید '+money(tot)+' تومان بدهد:</div></div>';items.forEach(function(s){html+='<div class="settle-row"><div class="settle-arrow">←</div><div class="settle-text">به <b>'+esc(personName(s.to))+'</b> بدهکار است</div><div class="settle-amt">'+money(s.amount)+'<small>تومان</small></div></div>'});html+='</div>'});setEl.innerHTML=html}
+
+function renderAll(){renderSummary();renderExpenses();renderPeople();renderSettle()}
+
+function renderChips(){qs('#payerChips').innerHTML=people.map(function(p){return '<button type="button" class="chip'+(modalPayerId===p.id?' active':'')+'" data-action="select-payer" data-id="'+p.id+'">'+esc(p.name)+'</button>'}).join('');qs('#benChips').innerHTML=people.map(function(p){return '<button type="button" class="chip'+(modalBenIds.has(p.id)?' active':'')+'" data-action="toggle-ben" data-id="'+p.id+'">'+esc(p.name)+'</button>'}).join('');var all=people.length>0&&people.every(function(p){return modalBenIds.has(p.id)});qs('#toggleAll').textContent=all?'حذف همه':'انتخاب همه'}
+
+function openModal(id){editingExpenseId=id||null;if(!people.length){showToast('اول یک نفر اضافه کنید');switchTab('people');return}if(editingExpenseId){var e=null;for(var i=0;i<expenses.length;i++)if(expenses[i].id===editingExpenseId){e=expenses[i];break}if(!e)return;qs('#modalTitle').textContent='ویرایش هزینه';qs('#expTitle').value=e.title||'';qs('#expAmount').value=e.amount?Number(e.amount).toLocaleString('en-US'):'';modalPayerId=e.payerId;modalBenIds=new Set(e.beneficiaryIds||[])}else{qs('#modalTitle').textContent='افزودن هزینه';qs('#expTitle').value='';qs('#expAmount').value='';modalPayerId=null;modalBenIds=new Set()}renderChips();qs('#modalBackdrop').classList.add('open');document.body.style.overflow='hidden';setTimeout(function(){qs('#expTitle').focus()},300)}
+
+function closeModal(){qs('#modalBackdrop').classList.remove('open');document.body.style.overflow='';editingExpenseId=null}
+
+function addPerson(){var inp=qs('#personName');var n=(inp.value||'').trim();if(!n){inp.focus();return}if(people.some(function(p){return p.name.trim()===n})){showToast('این نام قبلاً اضافه شده');return}people.push({id:uid(),name:n});inp.value='';inp.focus();saveState();renderAll();showToast('«'+n+'» اضافه شد')}
+
+function deletePerson(id){var used=expenses.some(function(e){return e.payerId===id||(e.beneficiaryIds||[]).indexOf(id)!==-1});if(used){showToast('این شخص در هزینه‌ها استفاده شده');return}if(!confirm('حذف شود؟'))return;people=people.filter(function(p){return p.id!==id});saveState();renderAll();showToast('حذف شد')}
+
+function deleteExpense(id){if(!confirm('این هزینه حذف شود؟'))return;expenses=expenses.filter(function(e){return e.id!==id});saveState();renderAll();showToast('حذف شد')}
+
+function saveExpense(){var t=(qs('#expTitle').value||'').trim();var r=(qs('#expAmount').value||'').replace(/[^\d]/g,'');var a=parseInt(r,10);var bens=people.filter(function(p){return modalBenIds.has(p.id)}).map(function(p){return p.id});if(!t){showToast('عنوان را وارد کنید');qs('#expTitle').focus();return}if(!a||a<=0){showToast('مبلغ معتبر وارد کنید');qs('#expAmount').focus();return}if(!modalPayerId){showToast('پرداخت‌کننده را مشخص کنید');return}if(!bens.length){showToast('حداقل یک نفر را انتخاب کنید');return}if(editingExpenseId){for(var i=0;i<expenses.length;i++){if(expenses[i].id===editingExpenseId){expenses[i].title=t;expenses[i].amount=a;expenses[i].payerId=modalPayerId;expenses[i].beneficiaryIds=bens;break}}showToast('ویرایش شد')}else{expenses.unshift({id:uid(),title:t,amount:a,payerId:modalPayerId,beneficiaryIds:bens,createdAt:Date.now()});showToast('ثبت شد')}saveState();renderAll();closeModal()}
+
+function settleDone(){if(!expenses.length){showToast('تراکنشی نیست');return}var c=expenses.length;if(!confirm('همه‌ی '+c+' تراکنش پاک شوند؟'))return;expenses=[];saveState();renderAll();showToast('✓ تسویه شد')}
+
+function exportBackup(){if(!people.length&&!expenses.length){showToast('داده‌ای نیست');return}var data={app:'dongyar',version:1,exportedAt:new Date().toISOString(),people:people,expenses:expenses};try{var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='dongyar-backup-'+fileStamp()+'.json';document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url)},1000);showToast('💾 دانلود شد')}catch(e){showToast('خطا')}}
+
+function importBackup(file){if(!file)return;var reader=new FileReader();reader.onload=function(ev){try{var d=JSON.parse(ev.target.result);if(!d||!Array.isArray(d.people)||!Array.isArray(d.expenses))throw new Error('فایل معتبر نیست');if(!confirm('جایگزین شود؟'))return;people=d.people;expenses=d.expenses;saveState();renderAll();showToast('✓ بازگردانی شد')}catch(err){showToast('خطا: '+err.message)}};reader.readAsText(file)}
+
+function resetAll(){if(!confirm('همه‌ی داده‌ها حذف شوند؟'))return;people=[];expenses=[];saveState();renderAll();showToast('همه پاک شد')}
+
+function buildPdfHtml(){var st=computeSettlements();var total=expenses.reduce(function(s,e){return s+(Number(e.amount)||0)},0);var sorted=expenses.slice().sort(function(a,b){return (a.createdAt||0)-(b.createdAt||0)});var byD={};st.forEach(function(s){if(!byD[s.from])byD[s.from]=[];byD[s.from].push(s)});var dIds=Object.keys(byD).sort(function(a,b){return personIndex(a)-personIndex(b)});dIds.forEach(function(d){byD[d].sort(function(a,b){return personIndex(a.to)-personIndex(b.to)})});
+var h='<div style="direction:rtl;background:#fff;color:#1e293b;font-family:Vazirmatn,Tahoma,sans-serif;padding:56px 60px 44px;box-sizing:border-box;width:100%;font-size:13px;line-height:1.75;">';
+h+='<div style="text-align:center;padding-bottom:20px;margin-bottom:26px;border-bottom:2px solid #6366f1;"><div style="font-size:28px;font-weight:800;color:#4f46e5;line-height:1.5;">دنگ‌یار</div><div style="font-size:14px;color:#64748b;margin-top:4px;">گزارش تسویه‌حساب</div></div>';
+h+='<table style="width:100%;border-collapse:collapse;margin-bottom:28px;font-size:12.5px;"><tr><td style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;text-align:center;color:#64748b;font-weight:600;">📅 تاریخ</td><td style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;text-align:center;color:#64748b;font-weight:600;">👥 افراد</td><td style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;text-align:center;color:#64748b;font-weight:600;">🧾 تراکنش</td><td style="padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;text-align:center;color:#64748b;font-weight:600;">💰 جمع کل</td></tr><tr><td style="padding:12px 14px;border:1px solid #e2e8f0;text-align:center;font-weight:700;">'+todayFa()+'</td><td style="padding:12px 14px;border:1px solid #e2e8f0;text-align:center;font-weight:700;">'+money(people.length)+' نفر</td><td style="padding:12px 14px;border:1px solid #e2e8f0;text-align:center;font-weight:700;">'+money(sorted.length)+'</td><td style="padding:12px 14px;border:1px solid #e2e8f0;text-align:center;font-weight:800;color:#4f46e5;">'+money(total)+' ت</td></tr></table>';
+h+='<div style="font-size:16px;font-weight:800;color:#1e293b;margin-bottom:14px;padding-right:10px;border-right:4px solid #6366f1;">🤝 تسویه‌حساب</div>';
+if(!dIds.length){h+='<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:18px;text-align:center;color:#059669;font-weight:700;margin-bottom:28px;">✓ همه‌چیز تسویه است</div>'}else{dIds.forEach(function(did){var items=byD[did];var sub=items.reduce(function(s,i){return s+i.amount},0);h+='<div style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:14px;"><div style="background:#eef2ff;padding:10px 16px;border-bottom:1px solid #c7d2fe;"><span style="font-size:14.5px;font-weight:800;color:#1e293b;">'+esc(personName(did))+'</span><span style="font-size:12.5px;color:#64748b;font-weight:500;"> باید </span><span style="font-size:14px;font-weight:800;color:#4f46e5;">'+money(sub)+' تومان</span><span style="font-size:12.5px;color:#64748b;"> بپردازد</span></div><table style="width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed;"><thead><tr style="background:#f8fafc;"><th style="padding:9px 16px;text-align:right;font-weight:700;color:#64748b;border-bottom:1px solid #e2e8f0;font-size:11.5px;">به</th><th style="padding:9px 16px;text-align:left;font-weight:700;color:#64748b;border-bottom:1px solid #e2e8f0;font-size:11.5px;width:130px;">مبلغ (تومان)</th></tr></thead><tbody>';items.forEach(function(s,idx){var last=idx===items.length-1;var bb=last?'':'border-bottom:1px solid #f1f5f9;';h+='<tr><td style="padding:10px 16px;'+bb+'font-weight:600;">'+esc(personName(s.to))+'</td><td style="padding:10px 16px;'+bb+'text-align:left;font-weight:800;color:#4f46e5;">'+money(s.amount)+'</td></tr>'});h+='</tbody></table></div>'})}
+if(sorted.length){h+='<div style="font-size:16px;font-weight:800;color:#1e293b;margin:28px 0 14px;padding-right:10px;border-right:4px solid #f59e0b;">🧾 تراکنش‌ها</div><table style="width:100%;border-collapse:collapse;font-size:11.5px;table-layout:fixed;border:1px solid #e2e8f0;"><thead><tr style="background:#fffbeb;"><th style="padding:10px 8px;text-align:right;font-weight:700;color:#92400e;border-bottom:1px solid #fde68a;width:26px;">#</th><th style="padding:10px 8px;text-align:right;font-weight:700;color:#92400e;border-bottom:1px solid #fde68a;width:105px;">عنوان</th><th style="padding:10px 8px;text-align:right;font-weight:700;color:#92400e;border-bottom:1px solid #fde68a;width:80px;">پرداخت‌کننده</th><th style="padding:10px 8px;text-align:right;font-weight:700;color:#92400e;border-bottom:1px solid #fde68a;">برای</th><th style="padding:10px 8px;text-align:left;font-weight:700;color:#92400e;border-bottom:1px solid #fde68a;width:95px;">مبلغ</th></tr></thead><tbody>';sorted.forEach(function(e,i){var bens=(e.beneficiaryIds||[]);var bh=bens.length?bens.map(function(id){return '<span style="unicode-bidi:isolate;direction:rtl;white-space:nowrap;">'+esc(personName(id))+'</span>'}).join('،&nbsp;'):'—';var last=i===sorted.length-1;var bb=last?'':'border-bottom:1px solid #f1f5f9;';h+='<tr><td style="padding:9px 8px;'+bb+'color:#94a3b8;font-weight:600;font-size:11px;">'+(i+1)+'</td><td style="padding:9px 8px;'+bb+'font-weight:700;word-break:break-word;">'+esc(e.title)+'</td><td style="padding:9px 8px;'+bb+'font-weight:600;color:#4f46e5;word-break:break-word;">'+esc(personName(e.payerId))+'</td><td style="padding:9px 8px;'+bb+'color:#64748b;word-break:break-word;">'+bh+'</td><td style="padding:9px 8px;'+bb+'text-align:left;font-weight:800;color:#4f46e5;">'+money(e.amount)+'</td></tr>'});h+='</tbody></table>'}
+h+='<div style="margin-top:30px;padding-top:14px;border-top:1px solid #e2e8f0;text-align:center;font-size:10px;color:#94a3b8;">ساخته شده با <b style="color:#6366f1;">دنگ‌یار</b></div></div>';return h}
+
+function exportPDF(){if(!people.length){showToast('ابتدا افراد را اضافه کنید');return}var W=794;var content=buildPdfHtml();var c=qs('#pdfContainer');document.body.style.overflow='';c.innerHTML=content;c.classList.add('active');c.style.width=W+'px';c.style.minWidth=W+'px';c.style.maxWidth=W+'px';var ov=document.createElement('div');ov.className='pdf-loading-overlay';ov.innerHTML='<div class="spinner"></div><div>📄 در حال ساخت PDF...</div>';document.body.appendChild(ov);function cleanup(){c.classList.remove('active');c.innerHTML='';if(ov.parentNode)ov.parentNode.removeChild(ov)}function gen(){if(typeof window.html2pdf==='undefined'){cleanup();printFallback(content);return}var fh=c.scrollHeight||1123;var opt={margin:0,filename:'dongyar-settlement-'+fileStamp()+'.pdf',image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false,width:W,height:fh,windowWidth:W,windowHeight:fh,x:0,y:0,scrollX:0,scrollY:0,onclone:function(cd){try{var he=cd.documentElement,be=cd.body,el=cd.getElementById('pdfContainer');if(he){he.setAttribute('dir','rtl');he.style.cssText='width:'+W+'px !important;min-width:'+W+'px !important;max-width:'+W+'px !important;margin:0 !important;padding:0 !important;overflow:visible !important;background:#fff !important;'}if(be){be.style.cssText='width:'+W+'px !important;min-width:'+W+'px !important;max-width:'+W+'px !important;margin:0 !important;padding:0 !important;overflow:visible !important;background:#fff !important;direction:rtl !important;position:relative !important;'}if(el){el.style.cssText='display:block !important;position:absolute !important;top:0 !important;left:0 !important;right:auto !important;width:'+W+'px !important;min-width:'+W+'px !important;max-width:'+W+'px !important;margin:0 !important;padding:0 !important;box-sizing:border-box !important;background:#fff !important;direction:rtl !important;'}}catch(e){}}},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['tr']}};window.html2pdf().set(opt).from(c).save().then(function(){cleanup();showToast('✓ PDF دانلود شد')}).catch(function(err){console.error(err);cleanup();printFallback(content)})}if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){setTimeout(gen,300)}).catch(function(){setTimeout(gen,600)})}else{setTimeout(gen,700)}}
+
+function printFallback(content){var w=window.open('','_blank');if(!w){showToast('پنجره بسته شد');return}w.document.open();w.document.write('<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>گزارش دنگ‌یار</title><link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>*{box-sizing:border-box}body{margin:0;padding:0;background:#fff;font-family:Vazirmatn,Tahoma,sans-serif}@page{size:A4;margin:10mm}</style></head><body>'+content+'</body></html>');w.document.close();setTimeout(function(){try{w.focus();w.print()}catch(e){}},700)}
+
+function handleClick(e){var el=e.target.closest?e.target.closest('[data-action]'):null;if(!el)return;var a=el.getAttribute('data-action');var id=el.getAttribute('data-id');switch(a){case 'tab':switchTab(el.getAttribute('data-tab'));break;case 'open-add-expense':openModal(null);break;case 'add-person':addPerson();break;case 'delete-person':deletePerson(id);break;case 'edit-expense':openModal(id);break;case 'delete-expense':deleteExpense(id);break;case 'close-modal':closeModal();break;case 'save-expense':saveExpense();break;case 'reset-all':resetAll();break;case 'settle-done':settleDone();break;case 'export-backup':exportBackup();break;case 'import-backup':qs('#backupFile').click();break;case 'export-pdf':exportPDF();break;case 'select-payer':modalPayerId=id;renderChips();break;case 'toggle-ben':if(modalBenIds.has(id))modalBenIds.delete(id);else modalBenIds.add(id);renderChips();break;case 'toggle-all':var all=people.length>0&&people.every(function(p){return modalBenIds.has(p.id)});modalBenIds=all?new Set():new Set(people.map(function(p){return p.id}));renderChips();break}}
+
+function handleKeydown(e){if(e.key==='Escape'){var bd=qs('#modalBackdrop');if(bd&&bd.classList.contains('open'))closeModal()}}
+
+function setupAmountFormatting(){var inp=qs('#expAmount');if(!inp)return;inp.addEventListener('input',function(){var v=inp.value.replace(/[۰-۹]/g,function(d){return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d))}).replace(/[^\d]/g,'');inp.value=v?Number(v).toLocaleString('en-US'):''})}
+
+function setupPersonInput(){var inp=qs('#personName');if(!inp)return;inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();addPerson()}})}
+
+function setupBackdrop(){var bd=qs('#modalBackdrop');if(!bd)return;bd.addEventListener('click',function(e){if(e.target===bd)closeModal()})}
+
+function setupBackupFile(){var inp=qs('#backupFile');if(!inp)return;inp.addEventListener('change',function(e){var f=e.target.files&&e.target.files[0];if(f)importBackup(f);inp.value=''})}
+
+function setupNetworkIndicator(){var bar=qs('#offlineBar');if(!bar)return;function u(){if(navigator.onLine)bar.classList.remove('show');else bar.classList.add('show')}window.addEventListener('online',u);window.addEventListener('offline',u);u()}
+
+function setupServiceWorker(){try{if(!('serviceWorker' in navigator))return;if(location.protocol==='file:')return;var hasReset=(window.location.search||'').indexOf('reset_sw=1')!==-1;if(hasReset){navigator.serviceWorker.getRegistrations().then(function(r){return Promise.all(r.map(function(x){return x.unregister()}))}).then(function(){return caches.keys()}).then(function(k){return Promise.all(k.map(function(x){return caches.delete(x)}))}).then(function(){window.location.replace(window.location.pathname)});return}window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js',{scope:'./',updateViaCache:'none'}).then(function(reg){console.log('SW registered:',reg.scope)}).catch(function(err){console.log('SW failed:',err)})})}catch(err){}}
+
+function init(){try{loadState();renderAll();requestPersistentStorage();document.addEventListener('click',handleClick,false);document.addEventListener('keydown',handleKeydown,false);setupAmountFormatting();setupPersonInput();setupBackdrop();setupBackupFile();setupNetworkIndicator();setupServiceWorker();console.log('dongyar initialized ✓')}catch(err){console.error(err);alert('خطا: '+err.message)}}
+
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init)}else{init()}
+})();
+</script>
+</body>
+</html>
