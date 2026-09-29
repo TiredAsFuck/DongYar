@@ -1,0 +1,21 @@
+{
+  "name": "دنگ‌یار",
+  "short_name": "دنگ‌یار",
+  "description": "محاسبه‌ی دقیق دنگ و تسویه‌حساب",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8fafc",
+  "theme_color": "#6366f1",
+  "lang": "fa",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
