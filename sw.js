@@ -1,9 +1,10 @@
-const CACHE_NAME = 'dongyar-v3';
+const CACHE_NAME = 'dongyar-v1';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
-  './icon.png',
+  './icon-192.png',
+  './icon-512.png',
   'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap',
   'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
 ];
